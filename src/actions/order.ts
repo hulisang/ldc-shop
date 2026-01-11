@@ -7,15 +7,18 @@ import { revalidatePath } from "next/cache"
 import { db } from "@/lib/db"
 import { orders } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
+import { withOrderColumnFallback } from "@/lib/db/queries"
 
 export async function checkOrderStatus(orderId: string) {
     const session = await auth()
     if (!session?.user) return { success: false, error: 'Unauthorized' }
 
     // Check ownership
-    const order = await db.query.orders.findFirst({
-        where: eq(orders.orderId, orderId),
-        columns: { userId: true, status: true, amount: true, currentPaymentId: true }
+    const order = await withOrderColumnFallback(async () => {
+        return await db.query.orders.findFirst({
+            where: eq(orders.orderId, orderId),
+            columns: { userId: true, status: true, amount: true, currentPaymentId: true }
+        })
     })
 
     if (!order) return { success: false, error: 'Order not found' }

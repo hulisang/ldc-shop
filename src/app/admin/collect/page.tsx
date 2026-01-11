@@ -1,4 +1,5 @@
 import { headers } from "next/headers"
+import { auth } from "@/lib/auth"
 import { AdminPaymentCodeContent } from "@/components/admin/payment-code-content"
 
 async function resolveBaseUrl() {
@@ -16,7 +17,10 @@ async function resolveBaseUrl() {
 
 export default async function AdminCollectPage() {
     const baseUrl = await resolveBaseUrl()
-    const payLink = `${baseUrl}/pay`
+    const session = await auth()
+    const adminFromEnv = process.env.ADMIN_USERS?.split(',')[0]?.trim()
+    const payee = session?.user?.username || session?.user?.name || adminFromEnv || null
+    const payLink = payee ? `${baseUrl}/pay?to=${encodeURIComponent(payee)}` : `${baseUrl}/pay`
 
-    return <AdminPaymentCodeContent payLink={payLink} />
+    return <AdminPaymentCodeContent payLink={payLink} payee={payee} />
 }

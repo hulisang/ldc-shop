@@ -5,7 +5,7 @@ import { useI18n } from "@/lib/i18n/context"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { CreditCard, Package, Clock, AlertCircle, CheckCircle2, Loader2 } from "lucide-react"
+import { CreditCard, Package, Clock, AlertCircle, CheckCircle2, Loader2, User } from "lucide-react"
 import { CopyButton } from "@/components/copy-button"
 import { ClientDate } from "@/components/client-date"
 import { Textarea } from "@/components/ui/textarea"
@@ -24,6 +24,7 @@ interface Order {
     amount: string
     status: string
     cardKey: string | null
+    payee?: string | null
     createdAt: Date | null
     paidAt: Date | null
 }
@@ -150,6 +151,20 @@ export function OrderContent({ order, canViewKey, isOwner, refundRequest }: Orde
                                 )}
                             </div>
                         </div>
+
+                        {isPayment && order.payee && (
+                            <div className="flex justify-between items-center p-4 bg-gradient-to-r from-muted/40 to-muted/20 rounded-xl border border-border/30">
+                                <div className="space-y-1">
+                                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                        {t('payment.payeeLabel')}
+                                    </p>
+                                    <p className="font-semibold">{order.payee}</p>
+                                </div>
+                                <div className="h-12 w-12 bg-gradient-to-br from-primary/20 to-primary/5 rounded-xl flex items-center justify-center border border-primary/20">
+                                    <User className="h-5 w-5 text-primary" />
+                                </div>
+                            </div>
+                        )}
 
                         {/* Amount Info */}
                         <div className="flex justify-between items-center p-4 bg-gradient-to-r from-muted/40 to-muted/20 rounded-xl border border-border/30">

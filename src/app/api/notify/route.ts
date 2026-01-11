@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { orders, cards } from "@/lib/db/schema";
 import { md5 } from "@/lib/crypto";
 import { eq, sql } from "drizzle-orm";
+import { withOrderColumnFallback } from "@/lib/db/queries";
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -40,8 +41,10 @@ async function processNotify(params: Record<string, any>) {
         console.log("[Notify] Processing order:", orderId, "(original:", params.out_trade_no, ")");
 
         // Find Order
-        const order = await db.query.orders.findFirst({
-            where: eq(orders.orderId, orderId)
+        const order = await withOrderColumnFallback(async () => {
+            return await db.query.orders.findFirst({
+                where: eq(orders.orderId, orderId)
+            });
         });
 
         console.log("[Notify] Order found:", order ? "YES" : "NO", "status:", order?.status);

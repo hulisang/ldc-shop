@@ -159,6 +159,7 @@
         "adminTitle": "Payment QR Code",
         "adminDescription": "Share the link or let users scan to pay.",
         "linkLabel": "Payment Link",
+        "payeeLabel": "Payee",
         "qrAlt": "Payment QR code",
         "itemLabel": "Payment Item",
         "paidMessage": "Payment received. No delivery or card is required."

@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Loader2, CreditCard } from "lucide-react"
 import { toast } from "sonner"
 
-export function PaymentLinkContent() {
+export function PaymentLinkContent({ payee }: { payee?: string | null }) {
     const { t } = useI18n()
     const [amount, setAmount] = useState("")
     const [submitting, setSubmitting] = useState(false)
@@ -25,7 +25,7 @@ export function PaymentLinkContent() {
 
         setSubmitting(true)
         try {
-            const result = await createPaymentOrder(numeric)
+            const result = await createPaymentOrder(numeric, payee)
             if (!result?.success || !result.url || !result.params) {
                 toast.error(result?.error ? t(result.error) : t('common.error'))
                 return
@@ -61,6 +61,14 @@ export function PaymentLinkContent() {
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4">
+                        {payee && (
+                            <div className="rounded-lg border border-border/40 bg-muted/20 px-3 py-2">
+                                <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                                    {t('payment.payeeLabel')}
+                                </div>
+                                <div className="text-sm font-semibold">{payee}</div>
+                            </div>
+                        )}
                         <div className="space-y-2">
                             <Label htmlFor="payment-amount">{t('payment.amountLabel')}</Label>
                             <div className="relative">

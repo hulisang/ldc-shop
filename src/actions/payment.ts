@@ -16,7 +16,7 @@ function normalizeAmount(input: number | string) {
     return rounded
 }
 
-export async function createPaymentOrder(amountInput: number | string) {
+export async function createPaymentOrder(amountInput: number | string, payeeInput?: string | null) {
     const session = await auth()
     const user = session?.user
 
@@ -24,6 +24,10 @@ export async function createPaymentOrder(amountInput: number | string) {
     if (!normalized) {
         return { success: false, error: 'payment.invalidAmount' }
     }
+
+    const fallbackPayee = process.env.ADMIN_USERS?.split(',')[0]?.trim()
+    const payeeRaw = (payeeInput || fallbackPayee || '').trim()
+    const payee = payeeRaw ? payeeRaw.slice(0, 80) : null
 
     const orderId = generateOrderId()
     const amount = normalized.toFixed(2)
@@ -37,6 +41,7 @@ export async function createPaymentOrder(amountInput: number | string) {
             email: user?.email || null,
             userId: user?.id || null,
             username: user?.username || null,
+            payee,
             status: 'pending',
             currentPaymentId: orderId
         })

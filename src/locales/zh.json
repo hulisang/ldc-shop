@@ -159,6 +159,7 @@
         "adminTitle": "收款码",
         "adminDescription": "分享链接或让对方扫码付款。",
         "linkLabel": "收款链接",
+        "payeeLabel": "收款方",
         "qrAlt": "收款二维码",
         "itemLabel": "收款项目",
         "paidMessage": "付款已完成，无需发货或卡密。"

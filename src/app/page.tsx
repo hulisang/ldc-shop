@@ -53,6 +53,7 @@ export default async function Home() {
           product_name TEXT NOT NULL,
           amount DECIMAL(10, 2) NOT NULL,
           email TEXT,
+          payee TEXT,
           status TEXT DEFAULT 'pending',
           trade_no TEXT,
           card_key TEXT,
@@ -74,6 +75,7 @@ export default async function Home() {
         ALTER TABLE products ADD COLUMN IF NOT EXISTS purchase_limit INTEGER;
         ALTER TABLE products ADD COLUMN IF NOT EXISTS compare_at_price DECIMAL(10, 2);
         ALTER TABLE products ADD COLUMN IF NOT EXISTS is_hot BOOLEAN DEFAULT FALSE;
+        ALTER TABLE orders ADD COLUMN IF NOT EXISTS payee TEXT;
         ALTER TABLE cards ADD COLUMN IF NOT EXISTS reserved_order_id TEXT;
         ALTER TABLE cards ADD COLUMN IF NOT EXISTS reserved_at TIMESTAMP;
         ALTER TABLE cards ALTER COLUMN is_used SET DEFAULT FALSE;

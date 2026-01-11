@@ -5,7 +5,7 @@ import { useI18n } from "@/lib/i18n/context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CopyButton } from "@/components/copy-button"
 
-export function AdminPaymentCodeContent({ payLink }: { payLink: string }) {
+export function AdminPaymentCodeContent({ payLink, payee }: { payLink: string; payee?: string | null }) {
     const { t } = useI18n()
 
     const qrUrl = useMemo(() => {
@@ -22,6 +22,14 @@ export function AdminPaymentCodeContent({ payLink }: { payLink: string }) {
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="flex flex-col items-center gap-4">
+                        {payee && (
+                            <div className="w-full rounded-xl border border-border/40 bg-muted/20 px-4 py-3">
+                                <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                                    {t('payment.payeeLabel')}
+                                </div>
+                                <div className="mt-1 text-sm font-semibold">{payee}</div>
+                            </div>
+                        )}
                         <div className="rounded-2xl border border-border/50 bg-muted/30 p-4">
                             <img
                                 src={qrUrl}

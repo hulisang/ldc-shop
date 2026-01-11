@@ -13,6 +13,7 @@ async function ensureOrdersColumns() {
     await db.execute(sql`
         ALTER TABLE orders ADD COLUMN IF NOT EXISTS points_used INTEGER DEFAULT 0 NOT NULL;
         ALTER TABLE orders ADD COLUMN IF NOT EXISTS current_payment_id TEXT;
+        ALTER TABLE orders ADD COLUMN IF NOT EXISTS payee TEXT;
     `)
 }
 
@@ -528,6 +529,12 @@ export async function cancelExpiredOrders(filters: { productId?: string; userId?
     const productId = filters.productId ?? null;
     const userId = filters.userId ?? null;
     const orderId = filters.orderId ?? null;
+
+    try {
+        await ensureOrdersColumns()
+    } catch (error: any) {
+        if (!isMissingTableOrColumn(error)) throw error
+    }
 
     try {
         return await db.transaction(async (tx: any) => {
