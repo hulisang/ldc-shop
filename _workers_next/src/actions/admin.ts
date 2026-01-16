@@ -87,20 +87,25 @@ export async function saveProduct(formData: FormData) {
         })
     }
 
+    // Ensure all product columns exist before saving
+    const ensureColumns = async () => {
+        try {
+            await db.run(sql.raw(`ALTER TABLE products ADD COLUMN compare_at_price TEXT`));
+        } catch { /* column exists */ }
+        try {
+            await db.run(sql.raw(`ALTER TABLE products ADD COLUMN is_hot INTEGER DEFAULT 0`));
+        } catch { /* column exists */ }
+        try {
+            await db.run(sql.raw(`ALTER TABLE products ADD COLUMN purchase_warning TEXT`));
+        } catch { /* column exists */ }
+    }
+
     try {
         await doSave()
     } catch (error: any) {
-        const errorString = JSON.stringify(error)
-        if (errorString.includes('42703') || errorString.includes('no such column')) {
-            try {
-                await db.run(sql.raw(`ALTER TABLE products ADD COLUMN compare_at_price TEXT`));
-            } catch { /* duplicate column */ }
-            try {
-                await db.run(sql.raw(`ALTER TABLE products ADD COLUMN is_hot INTEGER DEFAULT 0`));
-            } catch { /* duplicate column */ }
-            try {
-                await db.run(sql.raw(`ALTER TABLE products ADD COLUMN purchase_warning TEXT`));
-            } catch { /* duplicate column */ }
+        const errorString = JSON.stringify(error) + (error?.message || '')
+        if (errorString.includes('42703') || errorString.includes('no such column') || errorString.includes('SQLITE_ERROR')) {
+            await ensureColumns()
             await doSave()
         } else {
             throw error

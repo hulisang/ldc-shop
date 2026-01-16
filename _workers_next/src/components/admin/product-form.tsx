@@ -13,7 +13,8 @@ import { useI18n } from "@/lib/i18n/context"
 export default function ProductForm({ product, categories = [] }: { product?: any; categories?: Array<{ name: string }> }) {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
-    const [showWarning, setShowWarning] = useState(!!product?.purchaseWarning)
+    // Only show warning section if purchaseWarning has actual content
+    const [showWarning, setShowWarning] = useState(Boolean(product?.purchaseWarning && String(product.purchaseWarning).trim()))
     const { t } = useI18n()
 
     async function handleSubmit(formData: FormData) {
